@@ -15,7 +15,7 @@ add_subdirectory(lib/LiquidCrystal)
 # Advanced firwmare example
 #====================================================================#
 generate_arduino_firmware(window-temp-ctrl
-    SRCS main.cpp AFMotor.cpp
+    SRCS main.cpp AFMotor.cpp CTaskMgr.cpp CWindow.cpp
     LIBS LiquidCrystalLib
     BOARD mega2560)
 

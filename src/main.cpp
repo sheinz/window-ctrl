@@ -5,74 +5,70 @@
 
 #include "LiquidCrystal.h"
 
+#include "CTaskMgr.h"
 
-AF_DCMotor motor(4);
+#include "CWindow.h"
+
 
 LiquidCrystal lcd(22, 24, 26, 28, 30, 32, 34);
+static CTaskMgr task_mgr;
+static CWindow window;
+
+class Test : public ITask
+{
+private:
+   bool m_started;
+
+public:
+   virtual void init(void)
+   {
+      m_started = false;
+   };
+
+   virtual void onExecute(void)
+   {
+      if (!m_started)
+      {
+         m_started = true;
+         window.calibrate();
+         lcd.print("Calibration started");
+      }
+      else
+      {
+         if (window.is_calibrating())
+         {
+            lcd.clear();
+            lcd.print("In progress...");
+         }
+         else
+         {
+            lcd.clear();
+            lcd.print("Done: ");
+            lcd.print(window.get_calib());
+         }
+      }
+   };
+};
+
+static Test test;
 
 void setup()
 {
   Serial.begin(9600);           // set up Serial library at 9600 bps
   Serial.println("Motor test!");
 
-  pinMode(52, INPUT_PULLUP);
-  pinMode(53, INPUT_PULLUP);
-
-  // turn on motor
-  motor.setSpeed(255);
-
-  motor.run(RELEASE);
-
   lcd.begin(16, 2);
-  lcd.setCursor(0, 0);
-  lcd.print("Closing:");
-  lcd.setCursor(0, 1);
-  lcd.print("Opening:");
+
+  task_mgr.init();
+  window.init();
+  test.init();
+
+  task_mgr.Add(&window, 100);
+  task_mgr.Add(&test, 1000);
 }
-
-void test(void)
-{
-   uint32_t timeout = 0;
-
-   motor.run(FORWARD);
-
-   lcd.setCursor(9, 0);
-   lcd.print("   ");
-   while (!digitalRead(52))
-   {
-      timeout++;
-      lcd.setCursor(9, 0);
-      lcd.print(timeout);
-      delay(1000);
-   }
-
-   motor.run(RELEASE);
-   delay(10000);
-
-   Serial.println();
-
-   timeout = 0;
-
-   motor.run(BACKWARD);
-
-   lcd.setCursor(9, 1);
-   lcd.print("   ");
-
-   while (!digitalRead(53))
-   {
-      timeout++;
-      lcd.setCursor(9, 1);
-      lcd.print(timeout);
-      delay(1000);
-   }
-
-   motor.run(RELEASE);
-   delay(10000);
-}
-
 
 
 void loop()
 {
-   test();
+   task_mgr.processTasks();
 }
