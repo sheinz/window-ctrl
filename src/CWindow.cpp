@@ -1,16 +1,25 @@
 #include "CWindow.h"
 #include "Arduino.h"
+#include "avr/eeprom.h"
 
 #define OPEN_TERMINAL_SWITCH        53
 #define CLOSE_TERMINAL_SWITCH       52
 
-#define NO_TIMEOUT      500000      // still some timeout
+#define NO_TIMEOUT      700000      // still some timeout
 
 #define PERCENCT_UNDEFINED 0xFF
 
+#define DEFAULT_FULL_OP_TIME   190000   // 190sec
+
+// ----------------------------------------------------------------------------
+
+EEMEM uint32_t eeprom_calib_full_ms;
+
+// ----------------------------------------------------------------------------
+
 CWindow::CWindow(void)
    : m_motor(4)
-   , m_full_ms(180000)     // TODO: temporary
+   , m_full_ms(DEFAULT_FULL_OP_TIME)
    , m_op_time_stop(0)
    , m_curr_percentage(PERCENCT_UNDEFINED)
    , m_pending_percentage(PERCENCT_UNDEFINED)
@@ -27,6 +36,13 @@ void CWindow::init(void)
 
    m_motor.setSpeed(255);
    m_motor.run(RELEASE);
+
+   m_full_ms = eeprom_read_dword(&eeprom_calib_full_ms);
+
+   if (m_full_ms > NO_TIMEOUT || m_full_ms < 50000)
+   {
+      m_full_ms = DEFAULT_FULL_OP_TIME;
+   }
 }
 
 // ----------------------------------------------------------------------------
@@ -41,7 +57,7 @@ void CWindow::onExecute(void)
       {
          m_state = IDLE;
          m_motor.run(RELEASE);
-         m_curr_percentage = (timeout) ? 100 : m_pending_percentage;
+         m_curr_percentage = (timeout) ? m_pending_percentage : 100;
       }
    }
    else if (m_state == CLOSE)
@@ -50,7 +66,7 @@ void CWindow::onExecute(void)
       {
          m_state = IDLE;
          m_motor.run(RELEASE);
-         m_curr_percentage = (timeout) ? 0 : m_pending_percentage;
+         m_curr_percentage = (timeout) ? m_pending_percentage : 0;
       }
    }
    else if (m_state == CALIB_INIT_CLOSE)
@@ -62,6 +78,7 @@ void CWindow::onExecute(void)
       }
       else if (digitalRead(CLOSE_TERMINAL_SWITCH))
       {
+         m_full_ms = millis();
          m_state = CALIB_FULL_OPEN;
          start_open();
       }
@@ -90,6 +107,8 @@ void CWindow::onExecute(void)
       {
          // Calibration is finished
          m_full_ms = (millis() - m_full_ms) / 2;
+
+         eeprom_update_dword(&eeprom_calib_full_ms, m_full_ms);
          m_state = IDLE;
          m_curr_percentage = 0;
          m_motor.run(RELEASE);
@@ -118,7 +137,6 @@ void CWindow::calibrate(void)
 {
    m_state = CALIB_INIT_CLOSE;
    m_op_time_stop = millis() + NO_TIMEOUT;
-   m_full_ms = millis();
    start_close();
 }
 
@@ -145,6 +163,9 @@ void CWindow::close(void)
 void CWindow::set(uint8_t open_percent)
 {
    uint8_t diff_percent;
+
+   if (m_state != IDLE)
+      return;
 
    if (m_curr_percentage == PERCENCT_UNDEFINED)
    {
@@ -200,6 +221,13 @@ bool CWindow::is_calibrating(void)
    return (m_state == CALIB_FULL_CLOSE ||
            m_state == CALIB_FULL_OPEN ||
            m_state == CALIB_INIT_CLOSE);
+}
+
+// ----------------------------------------------------------------------------
+
+bool CWindow::is_idle(void)
+{
+   return (m_state == IDLE);
 }
 
 // ----------------------------------------------------------------------------

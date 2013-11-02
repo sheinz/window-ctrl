@@ -24,6 +24,8 @@ public:
 
    bool is_calibrating(void);
 
+   bool is_idle(void);
+
    uint32_t get_calib(void);
 
 private:

@@ -17,34 +17,67 @@ static CWindow window;
 class Test : public ITask
 {
 private:
-   bool m_started;
+   uint8_t m_window_state;
+   uint8_t m_step;
 
 public:
    virtual void init(void)
    {
-      m_started = false;
+      m_window_state = 0;
+      m_step = 5;
+
+      // keys
+      pinMode(36, INPUT_PULLUP);
+      pinMode(38, INPUT_PULLUP);
+      pinMode(40, INPUT_PULLUP);
+      pinMode(42, INPUT_PULLUP);
+
+      lcd.setCursor(0, 1);
+      lcd.print("open");
+      lcd.setCursor(11, 1);
+      lcd.print("close");
    };
 
    virtual void onExecute(void)
    {
-      if (!m_started)
+      if (!window.is_idle())
       {
-         m_started = true;
-         window.calibrate();
-         lcd.print("Calibration started");
+         lcd.setCursor(0, 0);
+         lcd.print("In progress...");
+         return;
       }
       else
       {
-         if (window.is_calibrating())
+         lcd.setCursor(0, 0);
+         lcd.print("State: ");
+         lcd.print(m_window_state);
+         lcd.print("        ");
+      }
+
+      if (!digitalRead(36))   // right "close"
+      {
+         if (m_window_state >= m_step)
          {
-            lcd.clear();
-            lcd.print("In progress...");
+            m_window_state -= m_step;
+            window.set(m_window_state);
          }
-         else
+      }
+      if (!digitalRead(38))   // down
+      {
+         //lcd.clear();
+         //lcd.print("38");
+      }
+      if (!digitalRead(40))   // up
+      {
+         //lcd.clear();
+         //lcd.print("40");
+      }
+      if (!digitalRead(42))   // left "open"
+      {
+         if (m_window_state + m_step <= 100)
          {
-            lcd.clear();
-            lcd.print("Done: ");
-            lcd.print(window.get_calib());
+            m_window_state += m_step;
+            window.set(m_window_state);
          }
       }
    };
@@ -64,7 +97,7 @@ void setup()
   test.init();
 
   task_mgr.Add(&window, 100);
-  task_mgr.Add(&test, 1000);
+  task_mgr.Add(&test, 200);
 }
 
 
