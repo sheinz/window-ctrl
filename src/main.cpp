@@ -10,6 +10,7 @@
 #include "CWindow.h"
 #include "CKeyboard.h"
 #include "CKeyHandler.h"
+#include "CBeep.h"
 
 
 LiquidCrystal lcd(22, 24, 26, 28, 30, 32, 34);
@@ -17,6 +18,7 @@ static CTaskMgr task_mgr;
 static CWindow window;
 static CKeyHandler key_handler(&window, &lcd);
 static CKeyboard keyboard(&key_handler);
+CBeep beep;
 
 
 void setup()
@@ -29,10 +31,12 @@ void setup()
   task_mgr.init();
   window.init();
   keyboard.init();
+  beep.init();
 
   task_mgr.Add(&window, 100);
   task_mgr.Add(&keyboard, 100);
   task_mgr.Add(&key_handler, 1000);
+  task_mgr.Add(&beep, 50);
 }
 
 

@@ -18,6 +18,7 @@ set(SOURCES
     CWindow.cpp 
     CKeyboard.cpp 
     CKeyHandler.cpp
+    CBeep.cpp
 )
     
 

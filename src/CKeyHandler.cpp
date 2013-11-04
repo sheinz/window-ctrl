@@ -1,5 +1,9 @@
 #include "CKeyHandler.h"
+#include "CBeep.h"
 
+extern CBeep beep;
+
+// ----------------------------------------------------------------------------
 
 CKeyHandler::CKeyHandler(CWindow* pWindow, LiquidCrystal *pLcd)
    : mpWindow(pWindow)
@@ -13,6 +17,8 @@ CKeyHandler::CKeyHandler(CWindow* pWindow, LiquidCrystal *pLcd)
 
 void CKeyHandler::onKey(CKeyboard::EKey key)
 {
+   beep.beep();
+
    if (key == CKeyboard::KEY_LEFT)
    {
       if (m_window_state + m_step <= 100)
@@ -39,12 +45,18 @@ void CKeyHandler::onKey(CKeyboard::EKey key)
          mpWindow->set(m_window_state);
       }
    }
+   if (key == CKeyboard::KEY_DOWN)
+   {
+      mpWindow->calibrate();
+   }
 }
 
 // ----------------------------------------------------------------------------
 
 void CKeyHandler::onKeyLong(CKeyboard::EKey key)
 {
+   beep.beep(true);
+
    if (key == CKeyboard::KEY_LEFT)
    {
       if (m_window_state + 25 <= 100)
