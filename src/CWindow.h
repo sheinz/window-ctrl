@@ -11,6 +11,8 @@ class CWindow : public ITask
 public:
    CWindow(void);
 
+   virtual ~CWindow(void) {};
+
    virtual void init(void);
    virtual void onExecute(void);
 

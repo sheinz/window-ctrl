@@ -11,11 +11,18 @@ add_subdirectory(lib/LiquidCrystal)
 #add_definitions(-DARDUINO=105)
 
 
-#====================================================================#
-# Advanced firwmare example
-#====================================================================#
+set(SOURCES 
+    main.cpp 
+    AFMotor.cpp 
+    CTaskMgr.cpp 
+    CWindow.cpp 
+    CKeyboard.cpp 
+    CKeyHandler.cpp
+)
+    
+
 generate_arduino_firmware(window-temp-ctrl
-    SRCS main.cpp AFMotor.cpp CTaskMgr.cpp CWindow.cpp
+    SRCS ${SOURCES}
     LIBS LiquidCrystalLib
     BOARD mega2560)
 
