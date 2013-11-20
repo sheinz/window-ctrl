@@ -17,4 +17,4 @@ project(window-temp-ctrl C CXX)
 print_board_list()
 print_programmer_list()
 
-add_subdirectory(src)   
+add_subdirectory(src)

@@ -5,10 +5,19 @@
 set(ARDUINO_DEFAULT_BOARD diecimila) # Default Board ID, when not specified
 set(ARDUINO_DEFAULT_PORT /dev/ttyACM0) # Default Port, when not specified
 
-add_subdirectory(lib/LiquidCrystal)   
+add_subdirectory(lib/LiquidCrystal)
+add_subdirectory(lib/OneWire)
+add_subdirectory(lib/DS18B20)
 
 # for eclipse indexer
 #add_definitions(-DARDUINO=105)
+# 
+include_directories(
+    lib/DS18B20
+    lib/OneWire
+    lib/LiquidCrystal
+)
+
 
 
 set(SOURCES 
@@ -20,10 +29,15 @@ set(SOURCES
     CKeyHandler.cpp
     CBeep.cpp
 )
-    
+
+set(LIBRARIES
+    LiquidCrystalLib
+    OneWire_lib
+    DS18B20_lib
+    )
 
 generate_arduino_firmware(window-temp-ctrl
     SRCS ${SOURCES}
-    LIBS LiquidCrystalLib
+    LIBS ${LIBRARIES}
     BOARD mega2560)
 
