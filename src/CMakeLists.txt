@@ -28,6 +28,10 @@ set(SOURCES
     CKeyboard.cpp 
     CKeyHandler.cpp
     CBeep.cpp
+    CDisplay.cpp
+    CTempController.cpp
+    CTempProvider.cpp
+    CLifeCycle.cpp
 )
 
 set(LIBRARIES

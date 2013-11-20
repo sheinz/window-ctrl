@@ -4,6 +4,14 @@
 
 #define BEEPER_PIN      46
 
+// ----------------------------------------------------------------------------
+
+CBeep* CBeep::instance()
+{
+   static CBeep obj;
+   return &obj;
+}
+
 // ---------------------------------------------------------------------------
 
 void CBeep::init(void)
@@ -13,6 +21,8 @@ void CBeep::init(void)
    digitalWrite(BEEPER_PIN, LOW);
 
    mBeepTimeOut = 0;
+
+   CTaskMgr::instance()->Add(this, 50);
 }
 
 // ---------------------------------------------------------------------------
@@ -36,4 +46,5 @@ void CBeep::beep(bool long_beep)
    mBeepTimeOut = millis() + (long_beep ? 500 : 50);
    digitalWrite(BEEPER_PIN, HIGH);
 }
+
 // ---------------------------------------------------------------------------

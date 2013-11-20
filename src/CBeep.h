@@ -6,8 +6,7 @@
 class CBeep : public ITask
 {
 public:
-
-   virtual ~CBeep(void) {};
+   static CBeep* instance();
 
    virtual void init(void);
 
@@ -16,6 +15,8 @@ public:
    void beep(bool long_beep = false);
 
 private:
+   // not destructor due to interesting error message
+   // "undefined reference to `atexit'"
 
    uint32_t mBeepTimeOut;
 };

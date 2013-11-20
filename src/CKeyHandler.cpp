@@ -1,35 +1,39 @@
 #include "CKeyHandler.h"
 #include "CBeep.h"
-
-extern CBeep beep;
+#include "CDisplay.h"
 
 // ----------------------------------------------------------------------------
 
-CKeyHandler::CKeyHandler(CWindow* pWindow, LiquidCrystal *pLcd)
-   : mpWindow(pWindow)
-   , mpLcd(pLcd)
-   , m_window_state(0)
+CKeyHandler::CKeyHandler()
+   : m_window_state(0)
    , m_step(10)
 {
 }
 
 // ----------------------------------------------------------------------------
 
+void CKeyHandler::init(void)
+{
+   CTaskMgr::instance()->Add(this, 1000);
+}
+
+// ----------------------------------------------------------------------------
+
 void CKeyHandler::onKey(CKeyboard::EKey key)
 {
-   beep.beep();
+   CBeep::instance()->beep();
 
    if (key == CKeyboard::KEY_LEFT)
    {
       if (m_window_state + m_step <= 100)
       {
          m_window_state += m_step;
-         mpWindow->set(m_window_state);
+         CWindow::instance()->set(m_window_state);
       }
       else
       {
          m_window_state = 100;
-         mpWindow->set(m_window_state);
+         CWindow::instance()->set(m_window_state);
       }
    }
    if (key == CKeyboard::KEY_RIGHT)
@@ -37,17 +41,17 @@ void CKeyHandler::onKey(CKeyboard::EKey key)
       if (m_window_state >= m_step)
       {
          m_window_state -= m_step;
-         mpWindow->set(m_window_state);
+         CWindow::instance()->set(m_window_state);
       }
       else
       {
          m_window_state = 0;
-         mpWindow->set(m_window_state);
+         CWindow::instance()->set(m_window_state);
       }
    }
    if (key == CKeyboard::KEY_DOWN)
    {
-      mpWindow->calibrate();
+      CWindow::instance()->calibrate();
    }
 }
 
@@ -55,19 +59,19 @@ void CKeyHandler::onKey(CKeyboard::EKey key)
 
 void CKeyHandler::onKeyLong(CKeyboard::EKey key)
 {
-   beep.beep(true);
+   CBeep::instance()->beep(true);
 
    if (key == CKeyboard::KEY_LEFT)
    {
       if (m_window_state + 25 <= 100)
       {
          m_window_state += 25;
-         mpWindow->set(m_window_state);
+         CWindow::instance()->set(m_window_state);
       }
       else
       {
          m_window_state = 100;
-         mpWindow->set(m_window_state);
+         CWindow::instance()->set(m_window_state);
       }
    }
    if (key == CKeyboard::KEY_RIGHT)
@@ -75,12 +79,12 @@ void CKeyHandler::onKeyLong(CKeyboard::EKey key)
       if (m_window_state >= 25)
       {
          m_window_state -= 25;
-         mpWindow->set(m_window_state);
+         CWindow::instance()->set(m_window_state);
       }
       else
       {
          m_window_state = 0;
-         mpWindow->set(m_window_state);
+         CWindow::instance()->set(m_window_state);
       }
    }
 }
@@ -89,16 +93,17 @@ void CKeyHandler::onKeyLong(CKeyboard::EKey key)
 
 void CKeyHandler::onExecute(void)
 {
-   if (!mpWindow->is_idle())
+   if (!CWindow::instance()->is_idle())
    {
-      mpLcd->setCursor(0, 0);
-      mpLcd->print("Processing...");
+      CDisplay::instance()->setCursor(0, 0);
+      CDisplay::instance()->print("Processing...");
    }
    else
    {
-      mpLcd->setCursor(0, 0);
-      mpLcd->print("State: ");
-      mpLcd->print(m_window_state);
-      mpLcd->print(" %    ");
+      CDisplay::instance()->setCursor(0, 0);
+      CDisplay::instance()->print("State: ");
+      CDisplay::instance()->print(m_window_state);
+      CDisplay::instance()->print(" %    ");
    }
 }
+

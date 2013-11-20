@@ -1,7 +1,7 @@
 //***********************************************************************
 // FILE: CTaskMgr.cpp
 // AUTHOR: Yuriy Skriyka
-// DATE: 29-08-2010 
+// DATE: 29-08-2010
 // DESCRIPTION: The class controls tasks.
 //************************************************************************
 
@@ -9,7 +9,14 @@
 
 #include "Arduino.h"
 
-CTaskMgr TaskMgr;
+
+// ----------------------------------------------------------------------------
+
+CTaskMgr* CTaskMgr::instance()
+{
+   static CTaskMgr task_mgr;
+   return &task_mgr;
+}
 
 // ----------------------------------------------------------------------------
 
@@ -18,7 +25,7 @@ void CTaskMgr::init(void)
    for (uint8_t i = 0; i < MAX_TASKS; i++)
    {
       mTaskList[i].mpTask = 0;  // clear all task records
-   }  
+   }
 }
 
 // ----------------------------------------------------------------------------
@@ -103,5 +110,3 @@ bool CTaskMgr::isExist(const ITask *pTask)
    }
    return false;
 }
-
-

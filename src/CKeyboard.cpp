@@ -22,6 +22,8 @@ void CKeyboard::init(void)
    pinMode(KEY_DOWN, INPUT_PULLUP);
    pinMode(KEY_LEFT, INPUT_PULLUP);
    pinMode(KEY_RIGHT, INPUT_PULLUP);
+
+   CTaskMgr::instance()->Add(this, 100);
 }
 
 // ----------------------------------------------------------------------------

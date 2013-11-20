@@ -11,7 +11,7 @@
 class CKeyHandler : public IKeyHandler, public ITask
 {
 public:
-   CKeyHandler(CWindow *pWindow, LiquidCrystal *pLcd);
+   CKeyHandler();
 
    virtual ~CKeyHandler(void) {};
 
@@ -19,14 +19,11 @@ public:
 
    virtual void onKeyLong(CKeyboard::EKey key);
 
+   virtual void init(void);
+
    virtual void onExecute(void);
 
 private:
-
-   CWindow *mpWindow;
-   LiquidCrystal *mpLcd;
-
-
    // just for test
    uint8_t m_window_state;
    uint8_t m_step;

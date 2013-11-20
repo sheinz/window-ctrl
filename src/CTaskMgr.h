@@ -3,33 +3,28 @@
 //***********************************************************************
 // FILE: CTaskMgr.h
 // AUTHOR: Yuriy Skriyka
-// DATE: 29-08-2010 
+// DATE: 29-08-2010
 // DESCRIPTION: The class controls tasks.
 //************************************************************************
 
 #include <inttypes.h>
 
-
 #define MAX_TASKS    16
-
-class CTaskMgr;
-extern CTaskMgr TaskMgr;
 
 
 class ITask
 {
 public:
-
    virtual void init(void) {};
 
    virtual void onExecute(void) = 0;
 };
 
 
-
 class CTaskMgr
 {
 public:
+   static CTaskMgr* instance();
 
    void init(void);
 
@@ -50,7 +45,7 @@ private:
    struct TaskRecord
    {
       ITask *mpTask;          // the pointer to the task object. It is 0 if the record is free
-      uint32_t mInterval;     
+      uint32_t mInterval;
       uint32_t mLastTime;     // the time mark when the task was executed the last time
    };
 

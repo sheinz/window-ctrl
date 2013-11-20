@@ -9,9 +9,7 @@
 class CWindow : public ITask
 {
 public:
-   CWindow(void);
-
-   virtual ~CWindow(void) {};
+   static CWindow* instance();
 
    virtual void init(void);
    virtual void onExecute(void);
@@ -31,6 +29,7 @@ public:
    uint32_t get_calib(void);
 
 private:
+   CWindow(void);
 
    AF_DCMotor m_motor;
 

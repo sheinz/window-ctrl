@@ -17,6 +17,14 @@ EEMEM uint32_t eeprom_calib_full_ms;
 
 // ----------------------------------------------------------------------------
 
+CWindow* CWindow::instance()
+{
+   static CWindow window;
+   return &window;
+}
+
+// ----------------------------------------------------------------------------
+
 CWindow::CWindow(void)
    : m_motor(4)
    , m_full_ms(DEFAULT_FULL_OP_TIME)
@@ -43,6 +51,8 @@ void CWindow::init(void)
    {
       m_full_ms = DEFAULT_FULL_OP_TIME;
    }
+
+   CTaskMgr::instance()->Add(this, 100);
 }
 
 // ----------------------------------------------------------------------------
@@ -236,3 +246,4 @@ uint32_t CWindow::get_calib(void)
 {
    return m_full_ms;
 }
+
