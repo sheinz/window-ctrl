@@ -40,7 +40,7 @@ void CTempProvider::init()
    else
    {
       //CTaskMgr::instance()->Add(this, 60000);
-      CTaskMgr::instance()->Add(this, 6000);
+      CTaskMgr::instance()->Add(this, 18000);
       mTempSensors.startMeasurementAll();
    }
 }

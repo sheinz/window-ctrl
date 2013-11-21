@@ -13,6 +13,7 @@
 
 CKeyHandler::CKeyHandler(CTempController* pTempCtrl)
    : mTempCtrl(pTempCtrl)
+   , mCalibration(false)
 {
 }
 
@@ -62,7 +63,8 @@ void CKeyHandler::onKeyLong(CKeyboard::EKey key)
    if (key == CKeyboard::KEY_DOWN)
    {
       CWindow::instance()->calibrate();
-      SHOW_MESSAGE("Calibration", 2);
+      mCalibration = true;
+      SHOW_MESSAGE("Calibration");
    }
    if (key == CKeyboard::KEY_LEFT)
    {
@@ -107,6 +109,13 @@ void CKeyHandler::display()
 
    CDisplay::instance()->setCursor(11, 0);
    CDisplay::instance()->print(mTempCtrl->getOutTemp(), 1);
+
+   if (mCalibration && !CWindow::instance()->is_calibrating())
+   {
+      mCalibration = false;
+      SHOW_MESSAGE("Done ", 10);
+      CDisplay::instance()->print(CWindow::instance()->get_calib());
+   }
 }
 
 // ----------------------------------------------------------------------------

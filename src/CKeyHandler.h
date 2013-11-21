@@ -26,6 +26,8 @@ private:
    void display();
 
    CTempController* mTempCtrl;
+
+   bool mCalibration;
 };
 
 #endif // __CKEYHANDLER_H__

@@ -20,8 +20,8 @@
 #define TEMP_FINE_DIFFERENCE     0.5
 #define TEMP_COARSE_DIFFERENCE   2.0
 
-#define REFRESH_ROOM_TIME        (1000UL * 60 * 2)
-#define WARM_UP_ROOM_TIME        (1000UL * 60 * 2)
+#define REFRESH_ROOM_TIME        (1000UL * 60 * 15)
+#define WARM_UP_ROOM_TIME        (1000UL * 60 * 30)
 
 
 // ----------------------------------------------------------------------------
@@ -53,9 +53,6 @@ void CTempController::init()
    {
       mSetTemp = 25;
    }
-
-   Serial.print("Set temp: ");
-   Serial.println(mSetTemp);
 
    CWindow::instance()->set(WINDOW_DEFAULT_STATE);
 }

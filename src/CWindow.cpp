@@ -9,7 +9,8 @@
 
 #define PERCENCT_UNDEFINED 0xFF
 
-#define DEFAULT_FULL_OP_TIME   190000   // 190sec
+//#define DEFAULT_FULL_OP_TIME   190000   // 190sec
+#define DEFAULT_FULL_OP_TIME   121350
 
 // ----------------------------------------------------------------------------
 
