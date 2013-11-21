@@ -206,6 +206,13 @@ void CWindow::set(uint8_t open_percent)
 
 // ----------------------------------------------------------------------------
 
+uint8_t CWindow::get()
+{
+   return m_curr_percentage;
+}
+
+// ----------------------------------------------------------------------------
+
 void CWindow::start_open()
 {
    if (!digitalRead(OPEN_TERMINAL_SWITCH))

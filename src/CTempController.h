@@ -33,9 +33,12 @@ public:
    float getOutTemp();
 
 private:
+   void changeWindow(bool open, uint8_t value);
+
    float mSetTemp;
    float mOutTemp;
    float mInTemp;
+   bool mSkipNextFineUpdate;
 };
 
 #endif   // __CTEMPCONTROLLER_H__

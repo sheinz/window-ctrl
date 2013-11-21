@@ -21,6 +21,7 @@ public:
    void close(void);
 
    void set(uint8_t open_percent);
+   uint8_t get();
 
    bool is_calibrating(void);
 

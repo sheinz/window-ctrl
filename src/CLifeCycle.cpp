@@ -26,14 +26,15 @@ void CLifeCycle::init()
    Serial.begin(9600);
 
    CTaskMgr::instance()->init();
+   CWindow::instance()->init();
+   CBeep::instance()->init();
 
    mKeyboard.init();
    mKeyHandler.init();
    mTempController.init();
    mTempProvider.init();
 
-   CWindow::instance()->init();
-   CBeep::instance()->init();
+
 }
 
 // ----------------------------------------------------------------------------
