@@ -25,7 +25,7 @@ CDisplay::CDisplay()
 {
    pinMode(LCD_BACKLIGHT_PIN, OUTPUT);
    //digitalWrite(LCD_BACKLIGHT_PIN, HIGH);
-   analogWrite(LCD_BACKLIGHT_PIN, 30);
+   analogWrite(LCD_BACKLIGHT_PIN, 10);
 
    begin(16, 2);
 }
@@ -35,5 +35,5 @@ CDisplay::CDisplay()
 void CDisplay::back_light(bool on)
 {
    //digitalWrite(LCD_BACKLIGHT_PIN, on);
-   analogWrite(LCD_BACKLIGHT_PIN, on ? 30 : 0);
+   analogWrite(LCD_BACKLIGHT_PIN, on ? 10 : 0);
 }

@@ -10,6 +10,7 @@
 #include "CTaskMgr.h"
 #include "CBeep.h"
 #include "CWindow.h"
+#include "CMessage.h"
 
 CLifeCycle::CLifeCycle()
    : mTempController()
@@ -29,12 +30,12 @@ void CLifeCycle::init()
    CWindow::instance()->init();
    CBeep::instance()->init();
 
-   mKeyboard.init();
-   mKeyHandler.init();
    mTempController.init();
    mTempProvider.init();
+   mKeyboard.init();
+   mKeyHandler.init();
 
-
+   SHOW_MESSAGE("Hello window", 2);
 }
 
 // ----------------------------------------------------------------------------

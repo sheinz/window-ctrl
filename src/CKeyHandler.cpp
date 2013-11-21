@@ -2,11 +2,12 @@
 #include "CBeep.h"
 #include "CDisplay.h"
 #include "CWindow.h"
+#include "CMessage.h"
 
 
 #define TEMP_SET_STEP      0.5
 
-#define WINDOW_CTRL_STEP   10
+#define WINDOW_CTRL_STEP   20
 
 // ----------------------------------------------------------------------------
 
@@ -20,6 +21,8 @@ CKeyHandler::CKeyHandler(CTempController* pTempCtrl)
 void CKeyHandler::init(void)
 {
    CTaskMgr::instance()->Add(this, 5000);
+
+   display();
 }
 
 // ----------------------------------------------------------------------------
@@ -38,30 +41,13 @@ void CKeyHandler::onKey(CKeyboard::EKey key)
    }
    if (key == CKeyboard::KEY_LEFT)
    {
-      uint8_t state = CWindow::instance()->get();
-
-      state += WINDOW_CTRL_STEP;
-      if (state < 100)
-      {
-         CWindow::instance()->set(state);
-      }
-      else
-      {
-         CWindow::instance()->set(100);
-      }
+      SHOW_MESSAGE("Refreshing room", 2);
+      mTempCtrl->refreshRoom();
    }
    if (key == CKeyboard::KEY_RIGHT)
    {
-      uint8_t state = CWindow::instance()->get();
-
-      if (state < WINDOW_CTRL_STEP)
-      {
-         CWindow::instance()->set(0);
-      }
-      else
-      {
-         CWindow::instance()->set(state - WINDOW_CTRL_STEP);
-      }
+      SHOW_MESSAGE("Warming up room", 2);
+      mTempCtrl->warmUpRoom();
    }
 
    display();
@@ -76,6 +62,36 @@ void CKeyHandler::onKeyLong(CKeyboard::EKey key)
    if (key == CKeyboard::KEY_DOWN)
    {
       CWindow::instance()->calibrate();
+      SHOW_MESSAGE("Calibration", 2);
+   }
+   if (key == CKeyboard::KEY_LEFT)
+   {
+      uint8_t state = CWindow::instance()->get();
+
+      state += WINDOW_CTRL_STEP;
+      if (state < 100)
+      {
+         CWindow::instance()->set(state);
+      }
+      else
+      {
+         CWindow::instance()->set(100);
+      }
+      SHOW_MESSAGE("Opening", 2);
+   }
+   if (key == CKeyboard::KEY_RIGHT)
+   {
+      uint8_t state = CWindow::instance()->get();
+
+      if (state < WINDOW_CTRL_STEP)
+      {
+         CWindow::instance()->set(0);
+      }
+      else
+      {
+         CWindow::instance()->set(state - WINDOW_CTRL_STEP);
+      }
+      SHOW_MESSAGE("Closing", 2);
    }
 }
 
@@ -91,11 +107,6 @@ void CKeyHandler::display()
 
    CDisplay::instance()->setCursor(11, 0);
    CDisplay::instance()->print(mTempCtrl->getOutTemp(), 1);
-
-   CDisplay::instance()->setCursor(0, 1);
-   CDisplay::instance()->print(CWindow::instance()->is_idle() ?
-         "             " : "Processing...");
-
 }
 
 // ----------------------------------------------------------------------------

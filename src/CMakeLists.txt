@@ -33,6 +33,7 @@ set(SOURCES
     CTempController.cpp
     CTempProvider.cpp
     CLifeCycle.cpp
+    CMessage.cpp
 )
 
 set(LIBRARIES

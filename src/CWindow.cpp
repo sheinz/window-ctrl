@@ -186,18 +186,30 @@ void CWindow::set(uint8_t open_percent)
    }
    else if (open_percent > m_curr_percentage)
    {
-      diff_percent = open_percent - m_curr_percentage;
-
-      m_op_time_stop = millis() + (m_full_ms / 100 * diff_percent);
+      if (open_percent == 100)
+      {
+         m_op_time_stop = millis() + NO_TIMEOUT;
+      }
+      else
+      {
+         diff_percent = open_percent - m_curr_percentage;
+         m_op_time_stop = millis() + (m_full_ms / 100 * diff_percent);
+      }
       m_state = OPEN;
       start_open();
       m_pending_percentage = open_percent;
    }
    else if (open_percent < m_curr_percentage)
    {
-      diff_percent = m_curr_percentage - open_percent;
-
-      m_op_time_stop = millis() + (m_full_ms / 100 * diff_percent);
+      if (open_percent == 0)
+      {
+         m_op_time_stop = millis() + NO_TIMEOUT;
+      }
+      else
+      {
+         diff_percent = m_curr_percentage - open_percent;
+         m_op_time_stop = millis() + (m_full_ms / 100 * diff_percent);
+      }
       m_state = CLOSE;
       start_close();
       m_pending_percentage = open_percent;

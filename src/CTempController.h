@@ -23,8 +23,8 @@ public:
    virtual void onCoarseTempUpdate(float in_temp, float out_temp);
    virtual void onFineTempUpdate(float in_temp, float out_temp);
 
-   void sleep();
-   void resume();
+   void refreshRoom();
+   void warmUpRoom();
 
    void setTemp(float temperature);
    float getTemp();
@@ -39,6 +39,8 @@ private:
    float mOutTemp;
    float mInTemp;
    bool mSkipNextFineUpdate;
+   bool mEnable;
+   uint8_t mWindowState;
 };
 
 #endif   // __CTEMPCONTROLLER_H__

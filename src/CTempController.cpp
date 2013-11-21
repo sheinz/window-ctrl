@@ -8,6 +8,9 @@
 #include "CTempController.h"
 #include "Arduino.h"
 #include "CWindow.h"
+#include "CMessage.h"
+#include <avr/eeprom.h>
+#include <math.h>
 
 #define WINDOW_DEFAULT_STATE     10     // percent open
 #define WINDOW_FINE_STEP         5
@@ -15,14 +18,25 @@
 
 // The temperature difference that triggers action
 #define TEMP_FINE_DIFFERENCE     0.5
-#define TEMP_COARSE_DIFFERENCE   3.0
+#define TEMP_COARSE_DIFFERENCE   2.0
 
+#define REFRESH_ROOM_TIME        (1000UL * 60 * 2)
+#define WARM_UP_ROOM_TIME        (1000UL * 60 * 2)
+
+
+// ----------------------------------------------------------------------------
+
+EEMEM float eeprom_set_temp = 25.0;
+
+// ----------------------------------------------------------------------------
 
 CTempController::CTempController()
    : mSetTemp(25)
    , mInTemp(0)
    , mOutTemp(0)
    , mSkipNextFineUpdate(false)
+   , mEnable(true)
+   , mWindowState(0)
 {
 }
 
@@ -30,6 +44,19 @@ CTempController::CTempController()
 
 void CTempController::init()
 {
+   mSetTemp = eeprom_read_float(&eeprom_set_temp);
+
+   if (isnanf(mSetTemp) ||
+       isinff(mSetTemp) ||
+       mSetTemp < 10.0 ||
+       mSetTemp > 40.0)
+   {
+      mSetTemp = 25;
+   }
+
+   Serial.print("Set temp: ");
+   Serial.println(mSetTemp);
+
    CWindow::instance()->set(WINDOW_DEFAULT_STATE);
 }
 
@@ -37,6 +64,11 @@ void CTempController::init()
 
 void CTempController::onExecute()
 {
+   CTaskMgr::instance()->Remove(this);
+   CWindow::instance()->set(mWindowState);
+   mEnable = true;
+
+   SHOW_MESSAGE("Finished", 5);
 }
 
 // ----------------------------------------------------------------------------
@@ -45,12 +77,11 @@ void CTempController::changeWindow(bool open, uint8_t value)
 {
    uint8_t state = CWindow::instance()->get();
 
-   Serial.print("Updating window ");
-   Serial.print(open ? "opening " : "closing ");
-   Serial.println(value);
+   SHOW_MESSAGE(open ? "Opening " : "Closing ", 5);
 
    if (open)
    {
+
       state += value;
       if (state > 100)
       {
@@ -79,6 +110,9 @@ void CTempController::onCoarseTempUpdate(float in_temp, float out_temp)
    mOutTemp = out_temp;
    float difference;
 
+   if (!mEnable)
+      return;
+
    if (mInTemp > mSetTemp)
    {
       difference = mInTemp - mSetTemp;
@@ -104,6 +138,9 @@ void CTempController::onCoarseTempUpdate(float in_temp, float out_temp)
 
 void CTempController::onFineTempUpdate(float in_temp, float out_temp)
 {
+   if (!mEnable)
+      return;
+
    if (mSkipNextFineUpdate)
    {
       mSkipNextFineUpdate = false;
@@ -132,14 +169,30 @@ void CTempController::onFineTempUpdate(float in_temp, float out_temp)
 
 // ----------------------------------------------------------------------------
 
-void CTempController::sleep()
+void CTempController::refreshRoom()
 {
+   if (!mEnable)
+      return;
+
+   mWindowState = CWindow::instance()->get();
+
+   mEnable = false;
+   CTaskMgr::instance()->Add(this, REFRESH_ROOM_TIME);
+   CWindow::instance()->set(100);
 }
 
 // ----------------------------------------------------------------------------
 
-void CTempController::resume()
+void CTempController::warmUpRoom()
 {
+   if (!mEnable)
+      return;
+
+   mWindowState = CWindow::instance()->get();
+
+   mEnable = false;
+   CTaskMgr::instance()->Add(this, WARM_UP_ROOM_TIME);
+   CWindow::instance()->set(0);
 }
 
 // ----------------------------------------------------------------------------
@@ -147,6 +200,9 @@ void CTempController::resume()
 void CTempController::setTemp(float temperature)
 {
    mSetTemp = temperature;
+
+   // it will not actually write unless the value is changed
+   eeprom_update_float(&eeprom_set_temp, mSetTemp);
 }
 
 // ----------------------------------------------------------------------------
