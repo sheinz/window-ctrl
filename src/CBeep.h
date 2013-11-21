@@ -3,6 +3,10 @@
 
 #include "CTaskMgr.h"
 
+
+#define BEEP(long_beep)    CBeep::instance()->beep(long_beep)
+
+
 class CBeep : public ITask
 {
 public:

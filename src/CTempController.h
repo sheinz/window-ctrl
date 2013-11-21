@@ -33,7 +33,9 @@ public:
    float getOutTemp();
 
 private:
-
+   float mSetTemp;
+   float mOutTemp;
+   float mInTemp;
 };
 
 #endif   // __CTEMPCONTROLLER_H__

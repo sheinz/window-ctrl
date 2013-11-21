@@ -2,11 +2,13 @@
 #include "CBeep.h"
 #include "CDisplay.h"
 
+
+#define TEMP_SET_STEP      0.5
+
 // ----------------------------------------------------------------------------
 
-CKeyHandler::CKeyHandler()
-   : m_window_state(0)
-   , m_step(10)
+CKeyHandler::CKeyHandler(CTempController* pTempCtrl)
+   : mTempCtrl(pTempCtrl)
 {
 }
 
@@ -21,89 +23,54 @@ void CKeyHandler::init(void)
 
 void CKeyHandler::onKey(CKeyboard::EKey key)
 {
-   CBeep::instance()->beep();
+   BEEP();
 
-   if (key == CKeyboard::KEY_LEFT)
+   if (key == CKeyboard::KEY_UP)
    {
-      if (m_window_state + m_step <= 100)
-      {
-         m_window_state += m_step;
-         CWindow::instance()->set(m_window_state);
-      }
-      else
-      {
-         m_window_state = 100;
-         CWindow::instance()->set(m_window_state);
-      }
-   }
-   if (key == CKeyboard::KEY_RIGHT)
-   {
-      if (m_window_state >= m_step)
-      {
-         m_window_state -= m_step;
-         CWindow::instance()->set(m_window_state);
-      }
-      else
-      {
-         m_window_state = 0;
-         CWindow::instance()->set(m_window_state);
-      }
+      mTempCtrl->setTemp(mTempCtrl->getTemp() + TEMP_SET_STEP);
    }
    if (key == CKeyboard::KEY_DOWN)
    {
-      CWindow::instance()->calibrate();
+      mTempCtrl->setTemp(mTempCtrl->getTemp() - TEMP_SET_STEP);
    }
+
+   display();
 }
 
 // ----------------------------------------------------------------------------
 
 void CKeyHandler::onKeyLong(CKeyboard::EKey key)
 {
-   CBeep::instance()->beep(true);
+   BEEP(true);
 
    if (key == CKeyboard::KEY_LEFT)
    {
-      if (m_window_state + 25 <= 100)
-      {
-         m_window_state += 25;
-         CWindow::instance()->set(m_window_state);
-      }
-      else
-      {
-         m_window_state = 100;
-         CWindow::instance()->set(m_window_state);
-      }
+
    }
    if (key == CKeyboard::KEY_RIGHT)
    {
-      if (m_window_state >= 25)
-      {
-         m_window_state -= 25;
-         CWindow::instance()->set(m_window_state);
-      }
-      else
-      {
-         m_window_state = 0;
-         CWindow::instance()->set(m_window_state);
-      }
+
    }
+}
+
+// ----------------------------------------------------------------------------
+
+void CKeyHandler::display()
+{
+   CDisplay::instance()->setCursor(0, 0);
+   CDisplay::instance()->print(mTempCtrl->getInTemp(), 1);
+
+   CDisplay::instance()->setCursor(6, 0);
+   CDisplay::instance()->print(mTempCtrl->getTemp(), 1);
+
+   CDisplay::instance()->setCursor(11, 0);
+   CDisplay::instance()->print(mTempCtrl->getOutTemp(), 1);
 }
 
 // ----------------------------------------------------------------------------
 
 void CKeyHandler::onExecute(void)
 {
-   if (!CWindow::instance()->is_idle())
-   {
-      CDisplay::instance()->setCursor(0, 0);
-      CDisplay::instance()->print("Processing...");
-   }
-   else
-   {
-      CDisplay::instance()->setCursor(0, 0);
-      CDisplay::instance()->print("State: ");
-      CDisplay::instance()->print(m_window_state);
-      CDisplay::instance()->print(" %    ");
-   }
+   display();
 }
 

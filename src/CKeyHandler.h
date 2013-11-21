@@ -3,15 +3,14 @@
 
 
 #include "CKeyboard.h"
-#include "CWindow.h"
 #include "CTaskMgr.h"
-#include "LiquidCrystal.h"
+#include "CTempController.h"
 
 
 class CKeyHandler : public IKeyHandler, public ITask
 {
 public:
-   CKeyHandler();
+   CKeyHandler(CTempController* pTempCtrl);
 
    virtual ~CKeyHandler(void) {};
 
@@ -24,9 +23,9 @@ public:
    virtual void onExecute(void);
 
 private:
-   // just for test
-   uint8_t m_window_state;
-   uint8_t m_step;
+   void display();
+
+   CTempController* mTempCtrl;
 };
 
 #endif // __CKEYHANDLER_H__

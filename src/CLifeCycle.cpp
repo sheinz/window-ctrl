@@ -9,12 +9,13 @@
 #include "CLifeCycle.h"
 #include "CTaskMgr.h"
 #include "CBeep.h"
+#include "CWindow.h"
 
 CLifeCycle::CLifeCycle()
-   : mKeyHandler()
-   , mKeyboard(&mKeyHandler)
-   , mTempController()
+   : mTempController()
    , mTempProvider(&mTempController)
+   , mKeyHandler(&mTempController)
+   , mKeyboard(&mKeyHandler)
 {
 }
 

@@ -25,10 +25,12 @@ public:
    void process();
 
 private:
-   CKeyHandler mKeyHandler;
-   CKeyboard mKeyboard;
+
    CTempController mTempController;
    CTempProvider mTempProvider;
+   CKeyHandler mKeyHandler;
+   CKeyboard mKeyboard;
+
 };
 
 #endif   // __CLIFECYCLE_H__

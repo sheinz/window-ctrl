@@ -10,6 +10,9 @@
 
 
 CTempController::CTempController()
+   : mSetTemp(25)
+   , mInTemp(0)
+   , mOutTemp(0)
 {
 
 }
@@ -30,6 +33,9 @@ void CTempController::onExecute()
 
 void CTempController::onCoarseTempUpdate(float in_temp, float out_temp)
 {
+   mInTemp = in_temp;
+   mOutTemp = out_temp;
+
    Serial.print("Coarse in temp: ");
    Serial.println(in_temp);
    Serial.print("Out temp: ");
@@ -62,22 +68,26 @@ void CTempController::resume()
 
 void CTempController::setTemp(float temperature)
 {
+   mSetTemp = temperature;
 }
 
 // ----------------------------------------------------------------------------
 
 float CTempController::getTemp()
 {
+   return mSetTemp;
 }
 
 // ----------------------------------------------------------------------------
 
 float CTempController::getInTemp()
 {
+   return mInTemp;
 }
 
 // ----------------------------------------------------------------------------
 
 float CTempController::getOutTemp()
 {
+   return mOutTemp;
 }
