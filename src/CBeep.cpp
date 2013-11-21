@@ -22,6 +22,7 @@ void CBeep::init(void)
 
    mBeepTimeOut = 0;
 
+   // TODO: Optimize
    CTaskMgr::instance()->Add(this, 50);
 }
 

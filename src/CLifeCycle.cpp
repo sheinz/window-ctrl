@@ -5,6 +5,7 @@
  *      Author: yura
  */
 
+#include "Arduino.h"
 #include "CLifeCycle.h"
 #include "CTaskMgr.h"
 #include "CBeep.h"
@@ -21,6 +22,8 @@ CLifeCycle::CLifeCycle()
 
 void CLifeCycle::init()
 {
+   Serial.begin(9600);
+
    CTaskMgr::instance()->init();
 
    mKeyboard.init();

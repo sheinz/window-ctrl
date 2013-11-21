@@ -20,7 +20,7 @@ public:
    virtual void init();
    virtual void onExecute();
 
-   virtual void onRoughTempUpdate(float in_temp, float out_temp);
+   virtual void onCoarseTempUpdate(float in_temp, float out_temp);
    virtual void onFineTempUpdate(float in_temp, float out_temp);
 
    void sleep();

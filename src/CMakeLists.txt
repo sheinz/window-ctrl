@@ -8,6 +8,7 @@ set(ARDUINO_DEFAULT_PORT /dev/ttyACM0) # Default Port, when not specified
 add_subdirectory(lib/LiquidCrystal)
 add_subdirectory(lib/OneWire)
 add_subdirectory(lib/DS18B20)
+add_subdirectory(lib/AFMotor)
 
 # for eclipse indexer
 #add_definitions(-DARDUINO=105)
@@ -16,13 +17,13 @@ include_directories(
     lib/DS18B20
     lib/OneWire
     lib/LiquidCrystal
+    lib/AFMotor
 )
 
 
 
 set(SOURCES 
     main.cpp 
-    AFMotor.cpp 
     CTaskMgr.cpp 
     CWindow.cpp 
     CKeyboard.cpp 
@@ -38,6 +39,7 @@ set(LIBRARIES
     LiquidCrystalLib
     OneWire_lib
     DS18B20_lib
+    AFMotor_lib
     )
 
 generate_arduino_firmware(window-temp-ctrl
