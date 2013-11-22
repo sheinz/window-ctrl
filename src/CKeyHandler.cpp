@@ -13,6 +13,7 @@
 
 CKeyHandler::CKeyHandler(CTempController* pTempCtrl)
    : mTempCtrl(pTempCtrl)
+   , mIRreceiver(this)
    , mCalibration(false)
 {
 }
@@ -21,6 +22,8 @@ CKeyHandler::CKeyHandler(CTempController* pTempCtrl)
 
 void CKeyHandler::init(void)
 {
+   mIRreceiver.init();
+
    CTaskMgr::instance()->Add(this, 5000);
 
    display();
@@ -125,3 +128,29 @@ void CKeyHandler::onExecute(void)
    display();
 }
 
+// ----------------------------------------------------------------------------
+
+void CKeyHandler::onIrCmd(uint16_t cmd)
+{
+   switch (cmd)
+   {
+   case 0xE21D:
+      onKey(CKeyboard::KEY_LEFT);
+      break;
+   case 0x609F:
+      onKey(CKeyboard::KEY_RIGHT);
+      break;
+   case 0xA05F:
+      onKey(CKeyboard::KEY_UP);
+      break;
+   case 0x926D:
+      onKey(CKeyboard::KEY_DOWN);
+      break;
+   case 0x7887:
+      onKeyLong(CKeyboard::KEY_LEFT);
+      break;
+   case 0x906F:
+      onKeyLong(CKeyboard::KEY_RIGHT);
+      break;
+   }
+}

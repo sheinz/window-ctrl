@@ -5,9 +5,10 @@
 #include "CKeyboard.h"
 #include "CTaskMgr.h"
 #include "CTempController.h"
+#include "CIRreceiver.h"
 
 
-class CKeyHandler : public IKeyHandler, public ITask
+class CKeyHandler : public IKeyHandler, public ITask, public IIrCmdHandler
 {
 public:
    CKeyHandler(CTempController* pTempCtrl);
@@ -22,10 +23,13 @@ public:
 
    virtual void onExecute(void);
 
+   virtual void onIrCmd(uint16_t cmd);
+
 private:
    void display();
 
    CTempController* mTempCtrl;
+   CIRreceiver mIRreceiver;
 
    bool mCalibration;
 };

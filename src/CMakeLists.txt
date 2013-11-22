@@ -9,6 +9,7 @@ add_subdirectory(lib/LiquidCrystal)
 add_subdirectory(lib/OneWire)
 add_subdirectory(lib/DS18B20)
 add_subdirectory(lib/AFMotor)
+add_subdirectory(lib/IRremote)
 
 # for eclipse indexer
 #add_definitions(-DARDUINO=105)
@@ -18,6 +19,7 @@ include_directories(
     lib/OneWire
     lib/LiquidCrystal
     lib/AFMotor
+    lib/IRremote
 )
 
 
@@ -34,6 +36,7 @@ set(SOURCES
     CTempProvider.cpp
     CLifeCycle.cpp
     CMessage.cpp
+    CIRreceiver.cpp
 )
 
 set(LIBRARIES
@@ -41,6 +44,7 @@ set(LIBRARIES
     OneWire_lib
     DS18B20_lib
     AFMotor_lib
+    IRremote_lib
     )
 
 generate_arduino_firmware(window-temp-ctrl
