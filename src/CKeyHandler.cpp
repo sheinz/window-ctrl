@@ -4,10 +4,16 @@
 #include "CWindow.h"
 #include "CMessage.h"
 
+#include "Servo.h"
+
 
 #define TEMP_SET_STEP      0.5
 
 #define WINDOW_CTRL_STEP   20
+
+// ----------------------------------------------------------------------------
+
+static Servo blinds_servo;
 
 // ----------------------------------------------------------------------------
 
@@ -126,6 +132,7 @@ void CKeyHandler::display()
 void CKeyHandler::onExecute(void)
 {
    display();
+   blinds_servo.detach();
 }
 
 // ----------------------------------------------------------------------------
@@ -151,6 +158,16 @@ void CKeyHandler::onIrCmd(uint16_t cmd)
       break;
    case 0x906F:
       onKeyLong(CKeyboard::KEY_RIGHT);
+      break;
+   case 0xC03F:
+      SHOW_MESSAGE("Opening blinds", 2);
+      blinds_servo.attach(9, 690, 2600);
+      blinds_servo.write(180);
+      break;
+   case 0x40BF:
+      SHOW_MESSAGE("Closing blinds", 2);
+      blinds_servo.attach(9, 690, 2600);
+      blinds_servo.write(0);
       break;
    }
 }
