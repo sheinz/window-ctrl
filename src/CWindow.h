@@ -27,6 +27,8 @@ public:
 
    bool is_idle(void);
 
+   bool is_locked(void);
+
    uint32_t get_calib(void);
 
 private:

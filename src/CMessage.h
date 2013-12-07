@@ -20,6 +20,8 @@ public:
    void show(const char *pStr, uint8_t seconds = 0);
    void clear();
 
+   bool isActive();
+
    virtual void onExecute();
 
 private:

@@ -4,6 +4,7 @@
 
 #define OPEN_TERMINAL_SWITCH        53
 #define CLOSE_TERMINAL_SWITCH       52
+#define LOCK_SWITCH                 51
 
 #define NO_TIMEOUT      700000      // still some timeout
 
@@ -42,6 +43,7 @@ void CWindow::init(void)
 {
    pinMode(OPEN_TERMINAL_SWITCH, INPUT_PULLUP);
    pinMode(CLOSE_TERMINAL_SWITCH, INPUT_PULLUP);
+   pinMode(LOCK_SWITCH, INPUT_PULLUP);
 
    m_motor.setSpeed(255);
    m_motor.run(RELEASE);
@@ -146,6 +148,9 @@ void CWindow::onExecute(void)
 
 void CWindow::calibrate(void)
 {
+   if (digitalRead(LOCK_SWITCH))
+      return;  // Window is locked, do nothing
+
    m_state = CALIB_INIT_CLOSE;
    m_op_time_stop = millis() + NO_TIMEOUT;
    start_close();
@@ -155,6 +160,9 @@ void CWindow::calibrate(void)
 
 void CWindow::open(void)
 {
+   if (digitalRead(LOCK_SWITCH))
+      return;  // Window is locked, do nothing
+
    m_op_time_stop = millis() + NO_TIMEOUT;
    m_state = OPEN;
    start_open();
@@ -164,6 +172,9 @@ void CWindow::open(void)
 
 void CWindow::close(void)
 {
+   if (digitalRead(LOCK_SWITCH))
+      return;  // Window is locked, do nothing
+
    m_op_time_stop = millis() + NO_TIMEOUT;
    m_state = CLOSE;
    start_close();
@@ -174,6 +185,9 @@ void CWindow::close(void)
 void CWindow::set(uint8_t open_percent)
 {
    uint8_t diff_percent;
+
+   if (digitalRead(LOCK_SWITCH))
+      return;  // Window is locked, do nothing
 
    if (m_state != IDLE)
       return;
@@ -267,3 +281,9 @@ uint32_t CWindow::get_calib(void)
    return m_full_ms;
 }
 
+// ----------------------------------------------------------------------------
+
+bool CWindow::is_locked(void)
+{
+   return (digitalRead(LOCK_SWITCH));
+}

@@ -28,10 +28,13 @@ public:
 private:
    void display();
 
+   bool checkWindowUnlocked();
+
    CTempController* mTempCtrl;
    CIRreceiver mIRreceiver;
 
    bool mCalibration;
+   bool mLocked;
 };
 
 #endif // __CKEYHANDLER_H__

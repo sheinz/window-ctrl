@@ -78,7 +78,6 @@ void CTempController::changeWindow(bool open, uint8_t value)
 
    if (open)
    {
-
       state += value;
       if (state > 100)
       {

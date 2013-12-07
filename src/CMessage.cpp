@@ -20,6 +20,9 @@ CMessage* CMessage::instance()
 
 void CMessage::show(const char* pStr, uint8_t seconds)
 {
+   if (CTaskMgr::instance()->isExist(this))
+      return;
+
    clear();
    CDisplay::instance()->setCursor(0, MESSAGE_LINE);
    CDisplay::instance()->print(pStr);
@@ -49,6 +52,13 @@ void CMessage::onExecute()
 {
    CTaskMgr::instance()->Remove(this);
    clear();
+}
+
+// ----------------------------------------------------------------------------
+
+bool CMessage::isActive()
+{
+   return CTaskMgr::instance()->isExist(this);
 }
 
 // ----------------------------------------------------------------------------

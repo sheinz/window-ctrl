@@ -21,6 +21,7 @@ CKeyHandler::CKeyHandler(CTempController* pTempCtrl)
    : mTempCtrl(pTempCtrl)
    , mIRreceiver(this)
    , mCalibration(false)
+   , mLocked(false)
 {
 }
 
@@ -51,13 +52,19 @@ void CKeyHandler::onKey(CKeyboard::EKey key)
    }
    if (key == CKeyboard::KEY_LEFT)
    {
-      SHOW_MESSAGE("Refreshing room", 2);
-      mTempCtrl->refreshRoom();
+      if (checkWindowUnlocked())
+      {
+         SHOW_MESSAGE("Refreshing room", 2);
+         mTempCtrl->refreshRoom();
+      }
    }
    if (key == CKeyboard::KEY_RIGHT)
    {
-      SHOW_MESSAGE("Warming up room", 2);
-      mTempCtrl->warmUpRoom();
+      if (checkWindowUnlocked())
+      {
+         SHOW_MESSAGE("Warming up room", 2);
+         mTempCtrl->warmUpRoom();
+      }
    }
 
    display();
@@ -68,6 +75,9 @@ void CKeyHandler::onKey(CKeyboard::EKey key)
 void CKeyHandler::onKeyLong(CKeyboard::EKey key)
 {
    BEEP(true);
+
+   if (!checkWindowUnlocked())
+      return;  // Window is locked do nothing
 
    if (key == CKeyboard::KEY_DOWN)
    {
@@ -118,6 +128,20 @@ void CKeyHandler::display()
 
    CDisplay::instance()->setCursor(11, 0);
    CDisplay::instance()->print(mTempCtrl->getOutTemp(), 1);
+
+   if (CWindow::instance()->is_locked())
+   {
+      mLocked = true;
+      SHOW_MESSAGE("Locked");
+   }
+   else
+   {
+      if (mLocked)
+      {
+         mLocked = false;
+         SHOW_MESSAGE("Unlocked", 2);
+      }
+   }
 
    if (mCalibration && !CWindow::instance()->is_calibrating())
    {
@@ -170,4 +194,16 @@ void CKeyHandler::onIrCmd(uint16_t cmd)
       blinds_servo.write(0);
       break;
    }
+}
+
+// ----------------------------------------------------------------------------
+
+bool CKeyHandler::checkWindowUnlocked()
+{
+   if (CWindow::instance()->is_locked())
+   {
+      SHOW_MESSAGE("Window is locked!", 2);
+      return false;
+   }
+   return true;
 }
